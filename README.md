@@ -2,7 +2,7 @@
 
 This is a fork of the iamshaunjp/graphql-playlist repository.
 
-Jump [https://github.com/iamshaunjp/graphql-playlist/tree/my-branch](here) to get my version of this project.
+Jump [here](https://github.com/iamshaunjp/graphql-playlist/tree/my-branch) to get my version of this project.
 
 Aside from this readme and the new branch **my-branch** no changed were made to the code.
 
