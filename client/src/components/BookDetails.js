@@ -1,43 +1,53 @@
-import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
-import { getBookQuery } from '../queries/queries';
+import React from 'react'
+import { useQuery } from '@apollo/client'
 
-class BookDetails extends Component {
-    displayBookDetails(){
-        const { book } = this.props.data;
-        if(book){
-            return(
-                <div>
-                    <h2>{ book.name }</h2>
-                    <p>{ book.genre }</p>
-                    <p>{ book.author.name }</p>
-                    <p>All books by this author:</p>
-                    <ul className="other-books">
-                        { book.author.books.map(item => {
-                            return <li key={item.id}>{ item.name }</li>
-                        })}
-                    </ul>
-                </div>
-            );
-        } else {
-            return( <div>No book selected...</div> );
-        }
+import { getBook } from '../queries/book'
+
+export default function Bookdetails({ bookId }) {
+
+    const variables = {
+        id: bookId
+    };
+
+    const { error, loading, data } = useQuery(getBook, { variables })
+
+    if (error) {
+        return (
+            <>
+                <p className="error">
+                    Ouch book details fetching query failed.
+                    Maybe the developper did something wrong
+                </p>
+                <p className="error">BookId was {bookId}</p>
+            </>
+        )
     }
-    render(){
-        return(
-            <div id="book-details">
-                { this.displayBookDetails() }
-            </div>
-        );
+
+    if (loading) {
+        return <p>Please wait a bit, data are traveling toward your location</p>
     }
+
+
+    const { name, genre, author } = data.book;
+
+    return (
+        <div className="book-details">
+            <h3>{name}</h3>
+            <h5>{genre}</h5>
+            <p>The book was written by: {author.name}</p>
+            <ul>
+                <li>author currently is {author.age} years old</li>
+                <li>author has written {author.books.length} books as of now</li>
+                <li>List of the author's other works</li>
+                {
+                    author.books.map(({ name, genre }) =>
+                        <ul style={{ marginTop: 10 }} key={name}>
+                            <li>{name}</li>
+                            <li>{genre}</li>
+                        </ul>
+                    )
+                }
+            </ul>
+        </div >
+    )
 }
-
-export default graphql(getBookQuery, {
-    options: (props) => {
-        return {
-            variables: {
-                id: props.bookId
-            }
-        }
-    }
-})(BookDetails);

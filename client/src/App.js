@@ -1,28 +1,38 @@
-import React, { Component } from 'react';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import React, { useState } from 'react';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-// components
-import BookList from './components/BookList';
-import AddBook from './components/AddBook';
+import BookList from './components/BookList'
+import AddBook from './components/AddBook'
+import BookDetails from './components/BookDetails'
 
-// apollo client setup
 const client = new ApolloClient({
-    uri: 'http://localhost:4000/graphql'
+  uri: 'http://localhost:4000/api',
+  cache: new InMemoryCache(),
 });
 
-class App extends Component {
-  render() {
-    return (
-        <ApolloProvider client={client}>
-            <div id="main">
-                <h1>Ninja's Reading List</h1>
-                <BookList />
-                <AddBook />
-            </div>
-        </ApolloProvider>
-    );
+function App() {
+
+  const [bookId, setBookId] = useState('');
+
+  const clickOnBook = (id) => {
+    console.log('book clicked', id)
+    setBookId(id)
   }
+
+  return (
+    <ApolloProvider client={client}>
+      <div className="flex">
+        <div className="main">
+          <h1>Ninja's Reading List</h1>
+          <BookList handleClick={clickOnBook} />
+        </div>
+        <div className="drawer">
+          <AddBook />
+          {bookId !== '' && <BookDetails bookId={bookId} />}
+        </div>
+      </div>
+    </ApolloProvider>
+  );
 }
 
 export default App;
